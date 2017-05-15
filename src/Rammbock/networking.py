@@ -19,6 +19,8 @@ from .logger import logger
 from .synchronization import SynchronizedType
 from .binary_tools import to_hex
 
+from six import itervalues
+
 try:
     from sctp import sctpsocket_tcp
     SCTP_ENABLED = True
@@ -190,7 +192,7 @@ class _Server(_NetworkNode):
     def _bind_socket(self):
         try:
             self._socket.bind((self._ip, self._port))
-        except socket.error, e:
+        except socket.error as e:
             raise Exception("error: [Errno %d] %s for address %s:%d" % (e[0], e[1], self._ip, self._port))
         self._is_connected = True
 
@@ -382,7 +384,7 @@ class _NamedCache(object):
         return self.get_with_name(name)[0]
 
     def __iter__(self):
-        return self._cache.itervalues()
+        return itervalues(self._cache)
 
     def set_current(self, name):
         if name in self._cache:

@@ -18,7 +18,7 @@ import struct
 try:
     if bin(0):
         pass
-except NameError, name_error:
+except NameError as name_error:
     def bin(value):
         """
         Support for Python 2.5
@@ -55,7 +55,7 @@ def to_bin(string_value):
 
 
 def _int_to_bin(integer):
-    if integer >= 18446744073709551616L:
+    if integer >= 18446744073709551616:
         return to_bin(hex(integer))
     return LONGLONG.pack(integer).lstrip('\x00') or '\x00'
 

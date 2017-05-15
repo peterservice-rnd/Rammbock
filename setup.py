@@ -3,7 +3,7 @@ from distutils.core import setup
 from os.path import join, dirname, abspath
 
 CURDIR = dirname(abspath(__file__))
-execfile(join(CURDIR, 'src', 'Rammbock', 'version.py'))
+exec(compile(open(join(CURDIR, 'src', 'Rammbock', 'version.py')).read(), 'version.py', 'exec'))
 
 setup(name         = 'robotframework-rammbock',
       version      = VERSION,

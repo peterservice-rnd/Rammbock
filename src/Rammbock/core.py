@@ -28,6 +28,8 @@ from .templates import (Protocol, UInt, Int, PDU, MessageTemplate, Char, Binary,
                         TBCDContainerTemplate)
 from .binary_tools import to_0xhex, to_bin
 
+from robot.utils import is_string
+
 
 class RammbockCore(object):
 
@@ -451,7 +453,7 @@ class RammbockCore(object):
         | Save Template | MyMessage |
         | Save Template | MyOtherMessage | unlocked=True |
         """
-        if isinstance(unlocked, basestring):
+        if is_string(unlocked):
             unlocked = unlocked.lower() != 'false'
         template = self._get_message_template()
         if not unlocked:
@@ -661,7 +663,7 @@ class RammbockCore(object):
             yield msg, message_fields, header_fields
             self._register_receive(node, self._current_container.name, name)
             logger.debug("Received %s" % repr(msg))
-        except AssertionError, e:
+        except AssertionError as e:
             self._register_receive(node, self._current_container.name, name, error=e.args[0])
             raise e
 

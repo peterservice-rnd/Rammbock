@@ -17,6 +17,8 @@ from .binary_tools import to_0xhex, to_binary_string_of_length, \
     to_bin_of_length, to_tbcd_value, to_tbcd_binary, from_twos_comp
 from .ordered_dict import OrderedDict
 
+from robot.utils import unic
+
 
 class _StructuredElement(object):
 
@@ -28,17 +30,17 @@ class _StructuredElement(object):
         self._parent = None
 
     def __setitem__(self, name, child):
-        self._fields[unicode(name)] = child
+        self._fields[unic(name)] = child
         child._parent = self
 
     def __getitem__(self, name):
-        return self._fields[unicode(name)]
+        return self._fields[unic(name)]
 
     def __getattr__(self, name):
         return self[name]
 
     def __delitem__(self, name):
-        name = unicode(name)
+        name = unic(name)
         item = self._fields[name]
         del self._fields[name]
         item._parent = None
@@ -53,7 +55,7 @@ class _StructuredElement(object):
         return result
 
     def __contains__(self, key):
-        return unicode(key) in self._fields
+        return unic(key) in self._fields
 
     def _format_indented(self, text):
         return ''.join(['  %s\n' % line for line in text.splitlines()])
