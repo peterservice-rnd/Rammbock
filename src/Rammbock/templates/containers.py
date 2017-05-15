@@ -18,8 +18,8 @@ import re
 from Rammbock.message import (Field, Union, Message, Header, List, Struct,
                               BinaryContainer, BinaryField, TBCDContainer,
                               Conditional, Bag)
-from message_stream import MessageStream
-from primitives import Length, Binary, TBCD, BagSize
+from .message_stream import MessageStream
+from .primitives import Length, Binary, TBCD, BagSize
 from Rammbock.ordered_dict import OrderedDict
 from Rammbock.binary_tools import (to_binary_string_of_length, to_bin,
                                    to_tbcd_value, to_tbcd_binary)

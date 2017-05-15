@@ -34,9 +34,9 @@ if sys.version_info < (3,):
         pass
 else:
     try:
-        from treading import get_ident as _get_ident
+        from _thread import get_ident as _get_ident
     except ImportError:
-        from dummy_threading import get_ident as _get_ident
+        from _dummy_thread import get_ident as _get_ident
     try:
         from collections.abc import KeysView, ValuesView, ItemsView
     except ImportError:
