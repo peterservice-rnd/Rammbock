@@ -36,9 +36,9 @@ class TestUnions(TestCase, WithValidation):
     def test_decode_union(self):
         union = self._get_foo_union()
         decoded = union.decode(to_bin('0xcafebabe'))
-        self.assertEquals(decoded.small.hex, '0xca')
-        self.assertEquals(decoded.medium.hex, '0xcafe')
-        self.assertEquals(decoded.large.hex, '0xcafebabe')
+        self.assertEquals(decoded.small.hex, b'0xca')
+        self.assertEquals(decoded.medium.hex, b'0xcafe')
+        self.assertEquals(decoded.large.hex, b'0xcafebabe')
 
     def test_union_length(self):
         union = self._get_foo_union()

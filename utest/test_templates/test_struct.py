@@ -52,8 +52,8 @@ class TestStructs(TestCase):
     def test_decode_several_structs(self):
         str_list = get_struct_list()
         decoded = str_list.decode(to_bin('0xcafebabe d00df00d'), {})
-        self.assertEquals(decoded[0].first.hex, '0xcafe')
-        self.assertEquals(decoded[1].second.hex, '0xf00d')
+        self.assertEquals(decoded[0].first.hex, b'0xcafe')
+        self.assertEquals(decoded[1].second.hex, b'0xf00d')
 
     def test_length_of_struct(self):
         pair = get_pair()
@@ -63,8 +63,8 @@ class TestStructs(TestCase):
     def test_decode_struct(self):
         pair = get_pair()
         decoded = pair.decode(to_bin('0xcafebabe'), {})
-        self.assertEquals(decoded.first.hex, '0xcafe')
-        self.assertEquals(decoded.second.hex, '0xbabe')
+        self.assertEquals(decoded.first.hex, b'0xcafe')
+        self.assertEquals(decoded.second.hex, b'0xbabe')
 
     def test_decode_aligned(self):
         struct = get_struct_with_length_and_alignment()

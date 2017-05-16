@@ -17,8 +17,8 @@ class TestProtocolMessageReceiving(TestCase):
     def test_read_header_and_pdu(self):
         stream = MockStream(to_bin('0xff0004cafe'))
         header, data = self._protocol.read(stream)
-        self.assertEquals(header.id.hex, '0xff')
-        self.assertEquals(data, '\xca\xfe')
+        self.assertEquals(header.id.hex, b'0xff')
+        self.assertEquals(data, b'\xca\xfe')
 
 
 class TestMessageStream(TestCase):
@@ -36,13 +36,13 @@ class TestMessageStream(TestCase):
 
     def test_get_message(self):
         msg = self._msg_stream.get(self._msg, header_filter='id')
-        self.assertEquals(msg.field_1.hex, '0xde')
+        self.assertEquals(msg.field_1.hex, b'0xde')
 
     def test_get_message_from_cache(self):
         _ = self._msg_stream.get(self._msg, header_filter='id')
         self._msg.header_parameters = {'id': '0xdd'}
         msg = self._msg_stream.get(self._msg, header_filter='id')
-        self.assertEquals(msg.field_1.hex, '0xbe')
+        self.assertEquals(msg.field_1.hex, b'0xbe')
 
     def test_empty_message_stream(self):
         _ = self._msg_stream.get(self._msg, header_filter='id')

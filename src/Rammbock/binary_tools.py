@@ -57,7 +57,7 @@ def to_bin(string_value):
 def _int_to_bin(integer):
     if integer >= 18446744073709551616:
         return to_bin(hex(integer))
-    return LONGLONG.pack(integer).lstrip('\x00') or '\x00'
+    return LONGLONG.pack(integer).lstrip(b'\x00') or b'\x00'
 
 
 def _hex_to_bin(string_value):
@@ -72,7 +72,7 @@ def to_bin_of_length(length, string_value):
     if len(bin) > length:
         raise AssertionError('Too long binary value %s (max length %d)'
                              % (string_value, length))
-    return bin.rjust(length, '\x00')
+    return bin.rjust(length, b'\x00')
 
 
 def to_hex(binary):
@@ -80,7 +80,7 @@ def to_hex(binary):
 
 
 def to_0xhex(binary):
-    return '0x' + to_hex(binary)
+    return b'0x' + to_hex(binary)
 
 
 def to_binary_string_of_length(length, bytes):

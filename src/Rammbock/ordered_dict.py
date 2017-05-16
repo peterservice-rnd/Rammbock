@@ -23,6 +23,8 @@
 
 import sys
 
+from six import itervalues
+
 if sys.version_info < (3,):
     try:
         from thread import get_ident as _get_ident
@@ -41,8 +43,6 @@ else:
         from collections.abc import KeysView, ValuesView, ItemsView
     except ImportError:
         pass
-
-from six import itervalues
 
 
 class OrderedDict(dict):

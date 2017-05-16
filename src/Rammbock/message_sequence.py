@@ -13,8 +13,10 @@
 #  limitations under the License.
 from __future__ import with_statement
 import subprocess
-from .ordered_dict import OrderedDict
+# from .ordered_dict import OrderedDict
 from .logger import logger
+
+from collections import OrderedDict
 
 
 def ip_name(ip, port):

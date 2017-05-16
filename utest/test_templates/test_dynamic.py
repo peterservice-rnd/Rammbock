@@ -61,7 +61,7 @@ class TestDynamicMessageTemplate(TestCase):
         tmp.add(lst)
         decoded = tmp.decode(to_bin('0x 00 04 6162 6364'))
         self.assertEquals(decoded.len.int, 4)
-        self.assertEquals(decoded.foo[0].hex, '0x61')
+        self.assertEquals(decoded.foo[0].hex, b'0x61')
 
     def test_encode_dynamic_list(self):
         tmp = MessageTemplate('Dymagic', self._protocol, {})

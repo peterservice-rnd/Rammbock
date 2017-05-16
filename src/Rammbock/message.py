@@ -15,9 +15,10 @@
 from math import ceil
 from .binary_tools import to_0xhex, to_binary_string_of_length, \
     to_bin_of_length, to_tbcd_value, to_tbcd_binary, from_twos_comp
-from .ordered_dict import OrderedDict
+# from .ordered_dict import OrderedDict
+from collections import OrderedDict
 
-from robot.utils import unic
+from robot.utils import unic, is_string
 
 
 class _StructuredElement(object):
@@ -68,7 +69,7 @@ class _StructuredElement(object):
         return '%s %s' % (self._type, self._name)
 
     def _get_raw_bytes(self):
-        return ''.join((field._raw for field in self._fields.values()))
+        return b''.join((field._raw for field in self._fields.values()))
 
     def __len__(self):
         return sum(len(field) for field in self._fields.values())
@@ -136,8 +137,8 @@ class Struct(_StructuredElement):
         return length + (self._align - length % self._align) % self._align
 
     def _get_raw_bytes(self):
-        result = ''.join((field._raw for field in self._fields.values()))
-        return result.ljust(self._get_aligned(len(result)), '\x00')
+        result = b''.join((field._raw for field in self._fields.values()))
+        return result.ljust(self._get_aligned(len(result)), b'\x00')
 
 
 class Union(_StructuredElement):
@@ -153,7 +154,7 @@ class Union(_StructuredElement):
         for field in self._fields.values():
             if len(field._raw) > len(max_raw):
                 max_raw = field._raw
-        return max_raw.ljust(self._length, '\x00')
+        return max_raw.ljust(self._length, b'\x00')
 
     def __len__(self):
         return self._length
@@ -171,7 +172,7 @@ class BinaryContainer(_StructuredElement):
         return sum(field.binlength for field in self._fields.values())
 
     def __len__(self):
-        return self._binlength() / 8
+        return self._binlength() // 8
 
     def _get_raw_bytes(self):
         # TODO: faster implementation...
@@ -260,14 +261,11 @@ class Field(object):
 
     @property
     def hex(self):
-        return hex(self)
+        return to_0xhex(self._value)
 
     @property
     def tbcd(self):
         return to_tbcd_value(self._original_value)
-
-    def __hex__(self):
-        return to_0xhex(self._value)
 
     def __nonzero__(self):
         return True
@@ -289,11 +287,15 @@ class Field(object):
 
     @property
     def ascii(self):
-        return ''.join(i for i in self._value if 128 > ord(i) >= 32)
+        try:
+            result = ''.join(i for i in self._value if 128 > ord(i) >= 32)
+        except TypeError:
+            result = ''.join(chr(i) for i in self._value if 128 > i >= 32)
+        return result
 
     @property
     def _raw(self):
-        return self._original_value.ljust(self._length, '\x00')
+        return self._original_value.ljust(self._length, b'\x00')
 
     def __str__(self):
         return str(self.__getattribute__(self._type))
