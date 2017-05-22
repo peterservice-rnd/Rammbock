@@ -19,6 +19,7 @@ from .logger import logger
 from .synchronization import SynchronizedType
 from .binary_tools import to_hex
 
+from robot.utils import PY3
 from six import itervalues
 
 try:
@@ -99,10 +100,10 @@ class _NetworkNode(_WithTimeouts):
         return stream.get(message_template, timeout=timeout, header_filter=header_filter, latest=latest)
 
     def log_send(self, binary, ip, port):
-        logger.debug("Send %d bytes: %s to %s:%s over %s" % (len(binary), to_hex(binary), ip, port, self._transport_layer_name))
+        logger.debug("Send %d bytes: %s to %s:%s over %s" % (len(binary), to_hex(binary).decode(), ip, port, self._transport_layer_name))
 
     def log_receive(self, binary, ip, port):
-        logger.trace("Trying to read %d bytes: %s from %s:%s over %s" % (len(binary), to_hex(binary), ip, port, self._transport_layer_name))
+        logger.trace("Trying to read %d bytes: %s from %s:%s over %s" % (len(binary), to_hex(binary).decode(), ip, port, self._transport_layer_name))
 
     def empty(self):
         result = True
@@ -397,11 +398,11 @@ class BufferedStream(_WithTimeouts):
 
     def __init__(self, connection, default_timeout):
         self._connection = connection
-        self._buffer = ''
+        self._buffer = b''
         self._default_timeout = default_timeout
 
     def read(self, size, timeout=None):
-        result = ''
+        result = b''
         timeout = float(timeout if timeout else self._default_timeout)
         cutoff = time.time() + timeout
         while time.time() < cutoff:
@@ -422,7 +423,7 @@ class BufferedStream(_WithTimeouts):
         if size == -1:
             size = len(self._buffer)
         if not self._buffer:
-            return ''
+            return b''
         result = self._buffer[:size]
         self._buffer = self._buffer[size:]
         return result
@@ -431,4 +432,4 @@ class BufferedStream(_WithTimeouts):
         self._buffer += self._connection.receive(timeout=timeout)
 
     def empty(self):
-        self._buffer = ''
+        self._buffer = b''

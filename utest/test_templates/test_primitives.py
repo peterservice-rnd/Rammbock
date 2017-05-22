@@ -12,7 +12,7 @@ class TestTemplateFields(TestCase):
         self.assertEquals(field.name, "field")
         self.assertEquals(field.default_value, '-72')
         self.assertEquals(field.type, 'int')
-        self.assertEquals(field.encode({}, {}, None).hex, b'0xffffffb8')
+        self.assertEquals(field.encode({}, {}, None).hex, '0xffffffb8')
 
     def test_uint_static_field(self):
         field = UInt(5, "field", 8)
@@ -20,7 +20,7 @@ class TestTemplateFields(TestCase):
         self.assertEquals(field.name, "field")
         self.assertEquals(field.default_value, '8')
         self.assertEquals(field.type, 'uint')
-        self.assertEquals(field.encode({}, {}, None).hex, b'0x0000000008')
+        self.assertEquals(field.encode({}, {}, None).hex, '0x0000000008')
 
     def test_char_static_field(self):
         field = Char(5, "char_field", 'foo')
@@ -43,11 +43,11 @@ class TestTemplateFields(TestCase):
         self.assertEquals(field.name, "field")
         self.assertEquals(field.default_value, '1')
         self.assertEquals(field.type, 'bin')
-        self.assertEquals(field.encode({}, {}, None).hex, b'0x01')
+        self.assertEquals(field.encode({}, {}, None).hex, '0x01')
 
     def test_long_binary_field_value(self):
         field = Binary(23, 'field', '0b1 1111 1111')
-        self.assertEquals(field.encode({}, {}, None).hex, b'0x0001ff')
+        self.assertEquals(field.encode({}, {}, None).hex, '0x0001ff')
 
     def test_binary_field_length_must_be_static(self):
         self.assertRaises(AssertionError, Binary, 'length', 'field', None)
@@ -78,24 +78,24 @@ class TestTemplateFields(TestCase):
     def test_decode_uint(self):
         field_template = UInt(2, 'field', 6)
         decoded = field_template.decode(to_bin('0xcafe'), {})
-        self.assertEquals(decoded.hex, b'0xcafe')
+        self.assertEquals(decoded.hex, '0xcafe')
 
     def test_decode_int(self):
         field_template = Int(2, 'field', -72)
         decoded = field_template.decode(to_bin('0xffb8'), {})
         self.assertEquals(decoded.int, -72)
-        self.assertEquals(decoded.hex, b'0xffb8')
+        self.assertEquals(decoded.hex, '0xffb8')
 
     def test_decode_chars(self):
         field_template = Char(2, 'field', 6)
         decoded = field_template.decode(to_bin('0xcafe'), {})
-        self.assertEquals(decoded.hex, b'0xcafe')
+        self.assertEquals(decoded.hex, '0xcafe')
 
     def test_decode_returns_used_length(self):
         field_template = UInt(2, 'field', 6)
         data = to_bin('0xcafebabeff00ff00')
         decoded = field_template.decode(data, {})
-        self.assertEquals(decoded.hex, b'0xcafe')
+        self.assertEquals(decoded.hex, '0xcafe')
         self.assertEquals(len(decoded), 2)
 
 
@@ -118,8 +118,8 @@ class TestLittleEndian(TestCase):
     def test_little_endian_char_decode(self):
         template = Char(5, 'field', None)
         field = template.decode('hello', None, little_endian=True)
-        self.assertEquals(field._raw, 'hello')
-        self.assertEquals(field.bytes, 'hello')
+        self.assertEquals(field._raw, b'hello')
+        self.assertEquals(field.bytes, b'hello')
         self.assertEquals(field.ascii, 'hello')
 
     def test_little_endian_uint_encode(self):
@@ -185,7 +185,7 @@ class TestAlignment(TestCase):
         sint = Int(1, 'foo', '-72', align='4')
         encoded = sint.encode({}, {}, None)
         self.assertEquals(encoded.int, -72)
-        self.assertEquals(encoded.hex, b'0xb8')
+        self.assertEquals(encoded.hex, '0xb8')
         self.assertEquals(len(encoded), 4)
         self.assertEquals(encoded._raw, to_bin('0xb800 0000'))
 
@@ -193,7 +193,7 @@ class TestAlignment(TestCase):
         sint = Int(1, 'foo', None, align='4')
         decoded = sint.decode(to_bin('0xb800 0000'), None)
         self.assertEquals(decoded.int, -72)
-        self.assertEquals(decoded.hex, b'0xb8')
+        self.assertEquals(decoded.hex, '0xb8')
         self.assertEquals(len(decoded), 4)
         self.assertEquals(decoded._raw, to_bin('0xb800 0000'))
 
@@ -201,7 +201,7 @@ class TestAlignment(TestCase):
         uint = UInt(1, 'foo', '0xff', align='4')
         encoded = uint.encode({}, {}, None)
         self.assertEquals(encoded.int, 255)
-        self.assertEquals(encoded.hex, b'0xff')
+        self.assertEquals(encoded.hex, '0xff')
         self.assertEquals(len(encoded), 4)
         self.assertEquals(encoded._raw, to_bin('0xff00 0000'))
 
@@ -209,7 +209,7 @@ class TestAlignment(TestCase):
         uint = UInt(1, 'foo', None, align='4')
         decoded = uint.decode(to_bin('0xff00 0000'), None)
         self.assertEquals(decoded.int, 255)
-        self.assertEquals(decoded.hex, b'0xff')
+        self.assertEquals(decoded.hex, '0xff')
         self.assertEquals(len(decoded), 4)
         self.assertEquals(decoded._raw, to_bin('0xff00 0000'))
 

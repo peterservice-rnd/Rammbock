@@ -230,7 +230,7 @@ def _get_template():
 
 class TestBufferedStream(TestCase):
 
-    DATA = 'foobardiibadaa'
+    DATA = b'foobardiibadaa'
 
     def setUp(self):
         self._buffered_stream = BufferedStream(MockConnection(self.DATA), 0.1)
@@ -239,9 +239,9 @@ class TestBufferedStream(TestCase):
         self.assertEquals(self.DATA, self._buffered_stream.read(len(self.DATA)))
 
     def test_empty(self):
-        self._buffered_stream.read(len('foobar'))
+        self._buffered_stream.read(len(b'foobar'))
         self._buffered_stream.empty()
-        self.assertRaises(AssertionError, self._buffered_stream.read, len(self.DATA) - len('foobar'))
+        self.assertRaises(AssertionError, self._buffered_stream.read, len(self.DATA) - len(b'foobar'))
 
     def test_read_all(self):
         data = self._buffered_stream.read(-1)
@@ -249,9 +249,9 @@ class TestBufferedStream(TestCase):
 
     def test_read_and_return(self):
         self._buffered_stream.read(-1)
-        self._buffered_stream.return_data('badaa')
+        self._buffered_stream.return_data(b'badaa')
         data = self._buffered_stream.read(-1)
-        self.assertEquals(data, 'badaa')
+        self.assertEquals(data, b'badaa')
 
 
 class MockConnection(object):
@@ -261,7 +261,7 @@ class MockConnection(object):
 
     def receive(self, timeout):
         ret = self._data
-        self._data = ''
+        self._data = b''
         return ret
 
 

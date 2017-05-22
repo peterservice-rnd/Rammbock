@@ -20,6 +20,7 @@ import re
 from Rammbock.message import Field, BinaryField
 from Rammbock.binary_tools import to_bin_of_length, to_0xhex, to_tbcd_binary, \
     to_tbcd_value, to_bin, to_twos_comp, to_int
+from robot.utils import PY3
 
 
 class _TemplateField(object):
@@ -67,6 +68,8 @@ class _TemplateField(object):
                      little_endian=little_endian and self.can_be_little_endian)
 
     def _prepare_data(self, data):
+        if PY3 and isinstance(data, str):
+            data = data.encode('UTF-8')
         return data
 
     def validate(self, parent, paramdict, name=None):
@@ -127,7 +130,7 @@ class _TemplateField(object):
     def _validate_exact_match(self, forced_value, value, field):
         if not self._is_match(forced_value, value, field._parent):
             return ['Value of field %s does not match %s!=%s' %
-                    (field._get_recursive_name(), self._default_presentation_format(value), forced_value)]
+                    (field._get_recursive_name(), self._default_presentation_format(value).decode(), forced_value)]
         return []
 
     def _default_presentation_format(self, value):
@@ -212,11 +215,15 @@ class Char(_TemplateField):
             value = value._value
         else:
             value = str(value or '')
+            if PY3:
+                value = value.encode()
             value += self._terminator
         length, aligned_length = self.length.find_length_and_set_if_necessary(message, len(value))
-        return value.ljust(length, '\x00'), aligned_length
+        return value.ljust(length, b'\x00'), aligned_length
 
     def _prepare_data(self, data):
+        if PY3 and isinstance(data, str):
+            data = data.encode("UTF-8")
         if self._terminator:
             return data[0:data.index(self._terminator) + len(self._terminator)]
         return data
@@ -509,7 +516,7 @@ class BagSize(object):
         # TODO: add open range 2-n
         size = size.strip()
         if size == '*':
-            self._set_min_max(0, sys.maxint)
+            self._set_min_max(0, sys.maxsize)
         elif self.fixed.match(size):
             self._set_min_max(size, size)
         elif self.range.match(size):
@@ -526,6 +533,6 @@ class BagSize(object):
     def __str__(self):
         if self.min == self.max:
             return str(self.min)
-        elif self.min == 0 and self.max == sys.maxint:
+        elif self.min == 0 and self.max == sys.maxsize:
             return '*'
         return '%s-%s' % (self.min, self.max)

@@ -7,8 +7,8 @@ from Rammbock.binary_tools import to_bin, to_bin_of_length, to_hex, to_0xhex, \
 class TestBinaryConversions(TestCase):
 
     def test_empty_values_to_bin(self):
-        self.assertEquals('', to_bin(None))
-        self.assertEquals('', to_bin(''))
+        self.assertEquals(b'', to_bin(None))
+        self.assertEquals(b'', to_bin(''))
 
     def test_integer_to_bin(self):
         self.assertEquals(to_bin(0), b'\x00')

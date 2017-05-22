@@ -19,7 +19,7 @@ try:
     if bin(0):
         pass
 except NameError as name_error:
-    def bin(value):
+    def bin(value):     # TODO: probably it can be removed
         """
         Support for Python 2.5
         Based on a recipe by Benjamin Wiley Sittler.
@@ -44,7 +44,7 @@ LONGLONG = struct.Struct('>Q')
 
 def to_bin(string_value):
     if string_value in (None, ''):
-        return ''
+        return b''
     string_value = str(string_value)
     if string_value.startswith('0x'):
         return _hex_to_bin(string_value)

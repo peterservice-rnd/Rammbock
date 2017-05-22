@@ -15,12 +15,13 @@
 from math import ceil
 from .binary_tools import to_0xhex, to_binary_string_of_length, \
     to_bin_of_length, to_tbcd_value, to_tbcd_binary, from_twos_comp
-# from .ordered_dict import OrderedDict
-from collections import OrderedDict
+from .ordered_dict import OrderedDict
+# from collections import OrderedDict
 
-from robot.utils import unic, is_string
+from robot.utils import py2to3, unic
 
 
+@py2to3
 class _StructuredElement(object):
 
     _type = None
@@ -222,6 +223,7 @@ class Header(_StructuredElement):
     _type = 'Header'
 
 
+@py2to3
 class Field(object):
 
     def __init__(self, type, name, value, aligned_len=None, little_endian=False):
@@ -261,7 +263,7 @@ class Field(object):
 
     @property
     def hex(self):
-        return to_0xhex(self._value)
+        return to_0xhex(self._value).decode("UTF-8")
 
     @property
     def tbcd(self):
