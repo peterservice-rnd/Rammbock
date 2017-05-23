@@ -20,9 +20,12 @@ import re
 from Rammbock.message import Field, BinaryField
 from Rammbock.binary_tools import to_bin_of_length, to_0xhex, to_tbcd_binary, \
     to_tbcd_value, to_bin, to_twos_comp, to_int
-from robot.utils import PY3
+from robot.api import logger
+from robot.libraries.BuiltIn import BuiltIn
+from robot.utils import PY3, is_bytes, py2to3
 
 
+@py2to3
 class _TemplateField(object):
 
     def __init__(self, name, default_value):
@@ -68,15 +71,17 @@ class _TemplateField(object):
                      little_endian=little_endian and self.can_be_little_endian)
 
     def _prepare_data(self, data):
-        if PY3 and isinstance(data, str):
-            data = data.encode('UTF-8')
-        return data
+        return BuiltIn().convert_to_bytes(data)
 
     def validate(self, parent, paramdict, name=None):
         name = name or self.name
         field = parent[name]
         value = field.bytes
         forced_value = self._get_element_value_and_remove_from_params(paramdict, name)
+        logger.trace("Forced_value: '{}' of type '{}'. Value is '{}".format(forced_value, type(forced_value), value))
+        if PY3 and is_bytes(forced_value):
+            forced_value = BuiltIn().convert_to_string(forced_value)
+            logger.trace('Forced_value converted to {}. Value is {}'.format(forced_value, value))
         try:
             if not forced_value or forced_value == 'None':
                 return []
@@ -100,7 +105,7 @@ class _TemplateField(object):
         if self._validate_masked(forced_pattern, value):
             return []
         return ["Value of field '%s' does not match pattern '%s!=%s'" %
-                (field._get_recursive_name(), to_0xhex(value), forced_pattern)]
+                (field._get_recursive_name(), BuiltIn().convert_to_string(to_0xhex(value)), forced_pattern)]
 
     def _validate_or(self, forced_pattern, value, field):
         if forced_pattern.find('|') != -1:
@@ -130,7 +135,7 @@ class _TemplateField(object):
     def _validate_exact_match(self, forced_value, value, field):
         if not self._is_match(forced_value, value, field._parent):
             return ['Value of field %s does not match %s!=%s' %
-                    (field._get_recursive_name(), self._default_presentation_format(value).decode(), forced_value)]
+                    (field._get_recursive_name(), BuiltIn().convert_to_string(self._default_presentation_format(value)), forced_value)]
         return []
 
     def _default_presentation_format(self, value):
@@ -149,7 +154,7 @@ class _TemplateField(object):
         return parent._get_recursive_name() + self.name
 
     def _set_default_value(self, value):
-        self.default_value = str(value) if value and value != '""' else None
+        self.default_value = BuiltIn().convert_to_string(value) if value and value != '""' else None
 
 
 class PlaceHolderField(object):
@@ -216,7 +221,7 @@ class Char(_TemplateField):
         else:
             value = str(value or '')
             if PY3:
-                value = value.encode()
+                value = BuiltIn().convert_to_bytes(value)
             value += self._terminator
         length, aligned_length = self.length.find_length_and_set_if_necessary(message, len(value))
         return value.ljust(length, b'\x00'), aligned_length

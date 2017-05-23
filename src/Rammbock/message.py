@@ -17,7 +17,7 @@ from .binary_tools import to_0xhex, to_binary_string_of_length, \
     to_bin_of_length, to_tbcd_value, to_tbcd_binary, from_twos_comp
 from .ordered_dict import OrderedDict
 # from collections import OrderedDict
-
+from robot.libraries.BuiltIn import BuiltIn
 from robot.utils import py2to3, unic
 
 
@@ -263,7 +263,7 @@ class Field(object):
 
     @property
     def hex(self):
-        return to_0xhex(self._value).decode("UTF-8")
+        return BuiltIn().convert_to_string(to_0xhex(self._value))
 
     @property
     def tbcd(self):

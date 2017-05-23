@@ -15,6 +15,10 @@
 import binascii
 import struct
 
+from robot.api import logger
+from robot.libraries.BuiltIn import BuiltIn
+from robot.utils import PY3
+
 try:
     if bin(0):
         pass
@@ -43,9 +47,10 @@ LONGLONG = struct.Struct('>Q')
 
 
 def to_bin(string_value):
+    logger.debug("to_bin(string_value): {}".format(string_value))
     if string_value in (None, ''):
         return b''
-    string_value = str(string_value)
+    string_value = BuiltIn().convert_to_string(string_value)
     if string_value.startswith('0x'):
         return _hex_to_bin(string_value)
     elif string_value.startswith('0b'):
@@ -136,8 +141,9 @@ def _invert(value):
 
 
 def to_int(string_value):
-    if string_value in (None, ''):
+    if string_value in (None, '', b''):
         raise Exception("No value or empty value given")
+    string_value = BuiltIn().convert_to_string(string_value)
     if string_value.startswith('0x') or string_value[:3] == '-0x':
         return int(string_value, 16)
     elif string_value.startswith('0b') or string_value[:3] == '-0b':

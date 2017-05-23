@@ -19,7 +19,7 @@ from .logger import logger
 from .synchronization import SynchronizedType
 from .binary_tools import to_hex
 
-from robot.utils import PY3
+from robot.libraries.BuiltIn import BuiltIn
 from six import itervalues
 
 try:
@@ -100,10 +100,18 @@ class _NetworkNode(_WithTimeouts):
         return stream.get(message_template, timeout=timeout, header_filter=header_filter, latest=latest)
 
     def log_send(self, binary, ip, port):
-        logger.debug("Send %d bytes: %s to %s:%s over %s" % (len(binary), to_hex(binary).decode(), ip, port, self._transport_layer_name))
+        logger.debug("Send %d bytes: %s to %s:%s over %s" % (len(binary),
+                                                             BuiltIn().convert_to_string(to_hex(binary)),
+                                                             ip,
+                                                             port,
+                                                             self._transport_layer_name))
 
     def log_receive(self, binary, ip, port):
-        logger.trace("Trying to read %d bytes: %s from %s:%s over %s" % (len(binary), to_hex(binary).decode(), ip, port, self._transport_layer_name))
+        logger.trace("Trying to read %d bytes: %s from %s:%s over %s" % (len(binary),
+                                                                         BuiltIn().convert_to_string(to_hex(binary)),
+                                                                         ip,
+                                                                         port,
+                                                                         self._transport_layer_name))
 
     def empty(self):
         result = True

@@ -20,8 +20,8 @@ from Rammbock.message import (Field, Union, Message, Header, List, Struct,
                               Conditional, Bag)
 from .message_stream import MessageStream
 from .primitives import Length, Binary, TBCD, BagSize
-# from Rammbock.ordered_dict import OrderedDict
-from collections import OrderedDict
+from Rammbock.ordered_dict import OrderedDict
+# from collections import OrderedDict
 from Rammbock.binary_tools import (to_binary_string_of_length, to_bin,
                                    to_tbcd_value, to_tbcd_binary)
 from Rammbock.condition_parser import ConditionParser
@@ -393,7 +393,7 @@ class BagTemplate(_Template):
                 logger.trace("'%s' matches in bag '%s'. value: %r" % (case.name, self.name, match[match.len - 1]))
                 return match
             except Exception as e:
-                logger.trace("'%s' does not match in bag '%s'. Error: %s" % (case.name, self.name, e.message))
+                logger.trace("'%s' does not match in bag '%s'. Error: %s" % (case.name, self.name, str(e)))
         raise AssertionError("Unable to decode bag value.")
 
     def _get_struct(self, name, parent):
